@@ -15,7 +15,17 @@ if st.button("Enviar"):
         if "value" in response:
             # Convierte la lista de objetos en un DataFrame
             response_df = pd.json_normalize(response["value"])  # Normaliza la respuesta JSON
-            st.dataframe(response_df)  # Muestra la respuesta en una tabla
+            
+            # Selecciona las columnas que deseas mostrar
+            selected_columns = ['content', 'page', 'url']  # Cambia esto según tus necesidades
+            if all(col in response_df.columns for col in selected_columns):
+                # Formatea los enlaces como hipervínculos
+                response_df['url'] = response_df['url'].apply(lambda x: f'<a href="{x}" target="_blank">{x}</a>')
+                
+                # Muestra el DataFrame, convirtiendo la columna de enlaces
+                st.markdown(response_df.to_html(escape=False), unsafe_allow_html=True)
+            else:
+                st.warning("No se encontraron las columnas seleccionadas en la respuesta.")
         else:
             st.warning("No se encontró 'value' en la respuesta JSON.")
     else:
