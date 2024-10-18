@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+            max-width: 800px; /* Ancho máximo para el contenido */
+            margin: 20px auto; /* Centrar el contenido en la página */
+            padding: 20px; /* Padding alrededor del contenido */
+            border-radius: 10px; /* Bordes redondeados */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra alrededor del contenido */
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center; /* Centrar el título */
+        }
+        #userMessage {
+            width: 100%;
+            height: 100px; /* Altura para el campo de texto multilinea */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            resize: none; /* Evitar el cambio de tamaño */
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            margin-top: 10px; /* Margen superior para separación */
+        }
+        #sendButton {
+            background-color: #0056b3; /* Color del botón */
+            color: white; /* Color del texto */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px; /* Margen superior para separación */
+            transition: background-color 0.3s; /* Efecto de transición */
+            display: block; /* Hacer que el botón ocupe su propio espacio */
+            width: 100%; /* Ancho completo */
+        }
+        #sendButton:hover {
+            background-color: #004494; /* Color del botón al pasar el mouse */
+        }
+        #response {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            white-space: pre-wrap; /* Mantener los espacios en blanco y saltos de línea */
+            background-color: #ffffff; /* Fondo blanco para la respuesta */
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Chatbot</h1>
+    
+    <!-- Campo de texto para el mensaje -->
+    <textarea id="userMessage" placeholder="Escribe tu mensaje aquí..."></textarea>
+    
+    <!-- Botón para enviar el mensaje -->
+    <button id="sendButton" onclick="sendMessage()">Enviar</button>
+    
+    <h2>Respuesta del Chatbot:</h2>
+    <pre id="response"></pre>
+
+    <script>
+        async function sendMessage() {
+            const message = document.getElementById('userMessage').value;
+            if (!message) {
+                alert("Por favor, ingresa un mensaje.");
+                return;
+            }
+
+            const response = await fetch('/chatbot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message }),
+            });
+            const data = await response.json();
+
+            // Mostrar la respuesta formateada en el área de respuesta
+            document.getElementById('response').innerText = data.formatted_response || 'No hay respuesta del chatbot';
+            document.getElementById('userMessage').value = ''; // Limpiar el campo de entrada
+        }
+    </script>
+</body>
+</html>
