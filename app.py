@@ -8,20 +8,23 @@ def send_message_to_chatbot(message, api_key):
         'Authorization': f'Bearer {api_key}'
     }
     payload = {
-        "model": "gpt-3.5-turbo",  # Puedes elegir otro modelo si lo prefieres
+        "model": "gpt-3.5-turbo",  # Ajusta el modelo si es necesario
         "messages": [{"role": "user", "content": message}]
     }
     
-    response = requests.post(url, headers=headers, json=payload)
-    
-    # Imprimir el código de estado y la respuesta completa para depuración
-    print(f"Status Code: {response.status_code}")
-    print(f"Response JSON: {response.json()}")  # Para revisar el contenido exacto
-    
-    if response.status_code == 200:
-        return response.json()  # Devuelve la respuesta en formato JSON
-    else:
-        return {"error": response.text}
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        
+        # Verifica si el código de estado es exitoso
+        if response.status_code == 200:
+            try:
+                return response.json()  # Intenta decodificar la respuesta como JSON
+            except requests.exceptions.JSONDecodeError:
+                return {"error": "La respuesta no está en formato JSON."}
+        else:
+            return {"error": f"Error en la API: {response.status_code}", "details": response.text}
+    except requests.exceptions.RequestException as e:
+        return {"error": f"Error en la solicitud: {str(e)}"}
 
 # Main Streamlit app
 api_key = "RVXAyI2OmGfbmgO8QtrUWUr2cv6Z3xLBCSsuoG5NisAzSeDBQdFm"  # Maneja esto de manera segura
@@ -33,9 +36,9 @@ if st.button("Enviar"):
     if user_message:
         response = send_message_to_chatbot(user_message, api_key)
 
-        # Imprimir toda la respuesta en Streamlit para verificar el contenido
-        st.write("Respuesta completa de la API:")
-        st.json(response)  # Muestra la respuesta JSON completa para inspección
+        # Muestra la respuesta completa para inspección
+        st.write("Respuesta completa de la API (texto):")
+        st.write(response)  # Muestra la respuesta (en texto o JSON según el caso)
         
         # Verifica si la respuesta contiene el campo "choices"
         if "choices" in response and len(response["choices"]) > 0:
