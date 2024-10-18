@@ -57,7 +57,7 @@ if st.button("Enviar"):
             response_df = pd.json_normalize(response["value"])  # Normaliza la respuesta JSON
             
             # Selecciona columnas específicas si es necesario
-            selected_columns = ['column1', 'column2', 'url']  # Reemplaza con los nombres de las columnas que desees mostrar
+            selected_columns = ['content', 'page', 'url']  # Reemplaza con los nombres de las columnas que desees mostrar
             response_df = response_df[selected_columns]  # Filtra las columnas seleccionadas
             
             # Muestra la respuesta en una tabla
