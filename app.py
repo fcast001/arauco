@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 import requests
 
 def send_message_to_chatbot(message, api_key):
@@ -14,6 +13,10 @@ def send_message_to_chatbot(message, api_key):
     }
     
     response = requests.post(url, headers=headers, json=payload)
+    
+    # Imprimir el código de estado y la respuesta completa para depuración
+    print(f"Status Code: {response.status_code}")
+    print(f"Response JSON: {response.json()}")  # Para revisar el contenido exacto
     
     if response.status_code == 200:
         return response.json()  # Devuelve la respuesta en formato JSON
@@ -30,13 +33,17 @@ if st.button("Enviar"):
     if user_message:
         response = send_message_to_chatbot(user_message, api_key)
 
-        # Verifica si la respuesta contiene un valor
+        # Imprimir toda la respuesta en Streamlit para verificar el contenido
+        st.write("Respuesta completa de la API:")
+        st.json(response)  # Muestra la respuesta JSON completa para inspección
+        
+        # Verifica si la respuesta contiene el campo "choices"
         if "choices" in response and len(response["choices"]) > 0:
             # Extrae el texto de la respuesta
             llm_response = response["choices"][0]["message"]["content"]
             st.write("Respuesta del Chatbot:")
             st.write(llm_response)  # Muestra la respuesta del modelo LLM
         else:
-            st.warning("No se encontró respuesta en la respuesta JSON.")
+            st.warning("No se encontró una respuesta válida en la respuesta JSON.")
     else:
         st.warning("Por favor, ingresa un mensaje.")
