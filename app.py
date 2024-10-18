@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from chatbot_request import send_message_to_chatbot
 
 api_key = "RVXAyI2OmGfbmgO8QtrUWUr2cv6Z3xLBCSsuoG5NisAzSeDBQdFm"  # Maneja esto de manera segura
@@ -18,10 +19,21 @@ if st.button("Enviar"):
                 page = item.get('page', 'Sin página')
                 url = item.get('url', None)  # El valor podría no estar presente
 
-                # Verifica si el contenido tiene formato de tabla
+                # Verifica si el contenido es una tabla (lista de listas o lista de diccionarios)
                 if isinstance(content, list):
-                    # Si el contenido es una tabla, mostrarla con st.table
-                    st.table(content)
+                    try:
+                        # Si es una lista de diccionarios, convertirlo a DataFrame
+                        if all(isinstance(i, dict) for i in content):
+                            df = pd.DataFrame(content)
+                            st.table(df)
+                        # Si es una lista de listas, manejarlo como DataFrame también
+                        elif all(isinstance(i, list) for i in content):
+                            df = pd.DataFrame(content)
+                            st.table(df)
+                        else:
+                            st.markdown("Formato de tabla no reconocido.")
+                    except Exception as e:
+                        st.error(f"Error formateando la tabla: {e}")
                 else:
                     # Si no es tabla, mostrar el contenido como texto en estilo LLM
                     st.markdown(f"**Respuesta:** {content}")
