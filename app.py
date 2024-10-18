@@ -19,7 +19,7 @@ if st.button("Enviar"):
                 url = item.get('url', 'Sin URL')
 
                 # Formatear la respuesta para que se vea como un LLM
-                st.markdown(f"**Respuesta:** {content}")
+                st.markdown(f"*Respuesta:* {content}")
                 st.markdown(f"*Página asociada:* {page}")
                 st.markdown(f"[Enlace asociado]({url})")
         else:
