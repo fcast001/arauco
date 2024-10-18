@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 from chatbot_request import send_message_to_chatbot
 
 api_key = "RVXAyI2OmGfbmgO8QtrUWUr2cv6Z3xLBCSsuoG5NisAzSeDBQdFm"  # Maneja esto de manera segura
@@ -13,24 +12,16 @@ if st.button("Enviar"):
 
         # Verifica si la respuesta contiene un valor
         if "value" in response:
-            # Convierte la lista de objetos en un DataFrame
-            response_df = pd.json_normalize(response["value"])  # Normaliza la respuesta JSON
-            
-            # Selecciona solo las columnas que deseas mostrar
-            selected_columns = ['content', 'page', 'url']  # Cambia esto según tus necesidades
-            
-            # Verifica que las columnas seleccionadas existen en el DataFrame
-            existing_columns = [col for col in selected_columns if col in response_df.columns]
-            
-            # Crea un nuevo DataFrame con las columnas seleccionadas
-            selected_df = response_df[existing_columns].copy()
-            
-            # Formatea los enlaces como hipervínculos
-            if 'url' in selected_df.columns:
-                selected_df['url'] = selected_df['url'].apply(lambda x: f'<a href="{x}" target="_blank">{x}</a>')
-            
-            # Muestra el DataFrame con columnas seleccionadas usando st.markdown
-            st.markdown(selected_df.to_html(escape=False), unsafe_allow_html=True)
+            # Recorre las respuestas para mostrar cada contenido en estilo LLM
+            for item in response["value"]:
+                content = item.get('content', 'Sin contenido')
+                page = item.get('page', 'Sin página')
+                url = item.get('url', 'Sin URL')
+
+                # Formatear la respuesta para que se vea como un LLM
+                st.markdown(f"**Respuesta:** {content}")
+                st.markdown(f"*Página asociada:* {page}")
+                st.markdown(f"[Enlace asociado]({url})")
         else:
             st.warning("No se encontró 'value' en la respuesta JSON.")
     else:
