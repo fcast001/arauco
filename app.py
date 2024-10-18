@@ -16,12 +16,22 @@ if st.button("Enviar"):
             for item in response["value"]:
                 content = item.get('content', 'Sin contenido')
                 page = item.get('page', 'Sin página')
-                url = item.get('url', 'Sin URL')
+                url = item.get('url', None)  # El valor podría no estar presente
 
-                # Formatear la respuesta para que se vea como un LLM
-                st.markdown(f"*Respuesta:* {content}")
+                # Verifica si el contenido tiene formato de tabla
+                if isinstance(content, list):
+                    # Si el contenido es una tabla, mostrarla con st.table
+                    st.table(content)
+                else:
+                    # Si no es tabla, mostrar el contenido como texto en estilo LLM
+                    st.markdown(f"**Respuesta:** {content}")
+                
+                # Mostrar la página asociada
                 st.markdown(f"*Página asociada:* {page}")
-                st.markdown(f"[Enlace asociado]({url})")
+                
+                # Mostrar el enlace si está presente
+                if url:
+                    st.markdown(f"[Enlace asociado]({url})")
         else:
             st.warning("No se encontró 'value' en la respuesta JSON.")
     else:
