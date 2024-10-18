@@ -11,11 +11,12 @@ if st.button("Enviar"):
     if user_message:
         response = send_message_to_chatbot(user_message, api_key)
 
-        # Si la respuesta es un diccionario, conviértelo en un DataFrame de pandas
-        if isinstance(response, dict):
-            response_df = pd.json_normalize(response)  # Normaliza la respuesta JSON
+        # Verifica si la respuesta contiene un valor
+        if "value" in response:
+            # Convierte la lista de objetos en un DataFrame
+            response_df = pd.json_normalize(response["value"])  # Normaliza la respuesta JSON
             st.dataframe(response_df)  # Muestra la respuesta en una tabla
         else:
-            st.warning("La respuesta no es un formato JSON válido.")
+            st.warning("No se encontró 'value' en la respuesta JSON.")
     else:
         st.warning("Por favor, ingresa un mensaje.")
