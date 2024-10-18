@@ -39,7 +39,7 @@ if st.button("Enviar"):
                     st.markdown(f"**Respuesta:** {content}")
                 
                 # Mostrar la página asociada
-                st.markdown(f"*Página asociada:* {page}")
+                st.markdown(f"Página asociada: {page}")
                 
                 # Mostrar el enlace si está presente
                 if url:
