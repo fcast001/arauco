@@ -1,33 +1,14 @@
-from flask import Flask, request, jsonify, render_template
+import streamlit as st
 from chatbot_request import send_message_to_chatbot
-import json
 
-app = Flask(__name__)
+api_key = "RVXAyI2OmGfbmgO8QtrUWUr2cv6Z3xLBCSsuoG5NisAzSeDBQdFm"  # Maneja esto de manera segura
 
-def format_json(json_data):
-    return json.dumps(json_data, indent=4, ensure_ascii=False)
+st.title("Chatbot")
 
-@app.route('/')
-def home():
-    return render_template('index.html')
-
-@app.route('/chatbot', methods=['POST'])
-def chatbot():
-    data = request.json
-    user_message = data.get("message")
-
-    if not user_message:
-        return jsonify({"error": "Missing message"}), 400
-
-    api_key = "RVXAyI2OmGfbmgO8QtrUWUr2cv6Z3xLBCSsuoG5NisAzSeDBQdFm"  # Maneja esto de manera segura
-
-    # Llama a la función que hace la solicitud al chatbot
-    chatbot_response = send_message_to_chatbot(user_message, api_key)
-
-    # Formatear la respuesta JSON
-    formatted_response = format_json(chatbot_response)
-
-    return jsonify({"formatted_response": formatted_response})
-
-if __name__ == '__main__':
-    app.run(debug=True)
+user_message = st.text_input("Escribe tu mensaje:")
+if st.button("Enviar"):
+    if user_message:
+        response = send_message_to_chatbot(user_message, api_key)
+        st.json(response)  # Muestra la respuesta en formato JSON
+    else:
+        st.warning("Por favor, ingresa un mensaje.")
